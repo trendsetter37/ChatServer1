@@ -164,7 +164,7 @@ public class Server {
             ClientThread ctt = ct.get(i);
             //try to write to the client, if it fails remove it from the list
 
-            if (!ctt.writeMessage(messageLf)) {
+            if (!ctt.writeMessage( messageLf)) {
 
                 ct.remove(i);
                 dispaly("Disconnected client " + ct.username + "removed from list");
@@ -275,24 +275,108 @@ public class Server {
             }
             date = new Date().toString() + "\n";
         }
-        
+
         //what will run forever
-        
-        public void run( ) {
-        // to loop until LOGOUT
+        public void run() {
+            // to loop until LOGOUT
             boolean keepGoing = true;
             while (keepGoing) {
-            //read String which is an object
-                
-            
-            
-            
+                //read String which is an object
+                try {
+
+                    cm = (ChatMessage) sInput.readObject();
+
+                } catch (IOException e) {
+
+                    display(username + "Exception reading streams " + e);
+                    break;
+                } catch (ClassNotFoundException e) {
+                    break;
+                }
+                // The message part of the Chat message
+                String message = cm.getMessage();
+
+                //switch on the type of message receive
+                switch (cm.getType()) {
+                    case ChatMessage.MESSAGE:
+                        broadcast(username + ": " + message);
+                        break;
+
+                    case ChatMessage.LOGOUT:
+                        broadcast(username + "Disconnected with a LOGOUT message. ");
+                        keepGoing = false;
+                        break;
+
+                    case ChatMessage.WHOISIN:
+                        writeMsg("List of users connected at: " + sdf.format(new Date()) + "\n");
+                        //scan all users connected
+
+                        for (int i = 0; i < ct.size(); i++) {
+
+                            ClientThread cto = ct.get(i);
+                            writeMsg((i + 1) + cto.username + "since" + cto.date);
+
+                        }
+                        break;
+                }
             }
-        
-        
+// remove myself from ArrayList
+// Connected clients
+            remove(id);
+            close();
         }
-        
+// Try to close everything
 
+        private void close() {
+            //try to close the connection
+            try {
+
+                if (sOutput != null) {
+                    sOutput.close();
+                }
+
+            } catch (Exception e) {
+            }
+            try {
+
+                if (sInput != null) {
+                    sInput.close();
+                }
+
+            } catch (Exception e) {
+            }
+            try {
+
+                if (socket != null) {
+                    socket.close();
+                }
+
+            } catch (Exception e) {
+            }
+            /**
+             * Write a message to the Client output stream
+             */
+        private boolean writeMsg(String msg) {
+
+            if (!socket.isConnected()) {
+                close();
+                return false;
+
+            }
+            //write message to stream
+            try {
+
+                sOutput.writeObject(msg);
+
+            } catch (IOException e) {
+
+                //if error occurs do not abort but do inform the user
+                display("Error sending message to " + username);
+                display(e.toString());
+
+            }
+            return true;
+
+        }
     }
-
 }
