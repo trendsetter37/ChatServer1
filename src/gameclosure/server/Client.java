@@ -1,17 +1,14 @@
 package gameclosure.server;
 
+
 import java.net.*;
 import java.io.*;
 import java.util.*;
-/**
- *
- * @author js0044
- */
-public class Client {
+
 /*
  * The Client that can be run both as a console or a GUI
  */
-
+public class Client  {
 
 	// for I/O
 	private ObjectInputStream sInput;		// to read from the socket
@@ -252,7 +249,4 @@ public class Client {
 		}
 	}
 }
-
-
-    
 

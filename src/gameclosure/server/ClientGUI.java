@@ -43,7 +43,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 	// Constructor connection receiving a socket number
 	ClientGUI(String host, int port) {
 
-		super("Chat Client");
+		super("Javis's Chat Client");
 		defaultPort = port;
 		defaultHost = host;
 		
@@ -152,7 +152,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		
 
 		if(o == login) {
-			// ok it is a connection request
+			// connection request
 			String username = tf.getText().trim();
 			// empty username ignore it
 			if(username.length() == 0)
@@ -170,7 +170,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 				port = Integer.parseInt(portNumber);
 			}
 			catch(Exception en) {
-				return;   // nothing I can do if port number is not valid
+				return;   // nothing can be done for an invalid port number
 			}
 
 			// try creating a new Client with GUI
